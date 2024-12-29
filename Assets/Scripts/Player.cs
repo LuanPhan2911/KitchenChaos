@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IKitchenObjectParent
 {
 
     public static Player Instance { get; private set; }
@@ -14,12 +14,14 @@ public class Player : MonoBehaviour
     [SerializeField] private LayerMask counterLayer;
 
     private Vector3 lastInteractionDir;
-    private ClearCounter selectedCounter;
+    private BaseCounter selectedCounter;
+    [SerializeField] private Transform kitchenObjectHoldPosition;
+    private KitchenObject kitchenObject;
 
 
     public class SelectedCounterChangedEventArgs : EventArgs
     {
-        public ClearCounter selectedCounter;
+        public BaseCounter selectedCounter;
     }
     public event EventHandler<SelectedCounterChangedEventArgs> OnSelectedCounterChanged;
 
@@ -39,13 +41,21 @@ public class Player : MonoBehaviour
     private void Start()
     {
         gameInput.OnInteractAction += GameInput_OnInteraction;
+        gameInput.OnInteractAlternateAction += GameInput_OnInteractionAlternate;
     }
 
     private void GameInput_OnInteraction(object sender, System.EventArgs e)
     {
         if (selectedCounter != null)
         {
-            selectedCounter.Interact();
+            selectedCounter.Interact(this);
+        }
+    }
+    private void GameInput_OnInteractionAlternate(object sender, System.EventArgs e)
+    {
+        if (selectedCounter != null)
+        {
+            selectedCounter.InteractAlternate(this);
         }
     }
 
@@ -60,7 +70,7 @@ public class Player : MonoBehaviour
 
     private void HandleMovement()
     {
-        Vector2 inputVector = gameInput.getMovementVectorNormalized();
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new(inputVector.x, 0f, inputVector.y);
 
         float playerRadius = 0.7f;
@@ -75,7 +85,7 @@ public class Player : MonoBehaviour
 
             //get only x movement
             Vector3 xMoveDir = new Vector3(moveDir.x, 0f, 0f).normalized;
-            canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, xMoveDir, moveDistance);
+            canMove = xMoveDir.x != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, xMoveDir, moveDistance);
             if (canMove)
             {
                 //can move in x direction
@@ -85,7 +95,7 @@ public class Player : MonoBehaviour
             {
                 //get only z movement
                 Vector3 zMoveDir = new Vector3(0f, 0f, moveDir.z).normalized;
-                canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, zMoveDir, moveDistance);
+                canMove = zMoveDir.z != 0 && !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight, playerRadius, zMoveDir, moveDistance);
                 if (canMove)
                 {
                     //can move in z direction
@@ -111,7 +121,7 @@ public class Player : MonoBehaviour
 
     private void HandleInteraction()
     {
-        Vector2 inputVector = gameInput.getMovementVectorNormalized();
+        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new(inputVector.x, 0f, inputVector.y);
         if (moveDir != Vector3.zero)
         {
@@ -122,11 +132,11 @@ public class Player : MonoBehaviour
 
         if (Physics.Raycast(transform.position, lastInteractionDir, out RaycastHit hit, interactionDistance, counterLayer))
         {
-            if (hit.transform.TryGetComponent(out ClearCounter clearCounter))
+            if (hit.transform.TryGetComponent(out BaseCounter counter))
             {
-                if (clearCounter != selectedCounter)
+                if (counter != selectedCounter)
                 {
-                    SetSelectedCounter(clearCounter);
+                    SetSelectedCounter(counter);
                 }
             }
             else
@@ -145,11 +155,34 @@ public class Player : MonoBehaviour
         return isWalking;
     }
 
-    private void SetSelectedCounter(ClearCounter clearCounter)
+    private void SetSelectedCounter(BaseCounter counter)
     {
-        selectedCounter = clearCounter;
+        selectedCounter = counter;
         OnSelectedCounterChanged?.Invoke(this,
-                    new SelectedCounterChangedEventArgs { selectedCounter = clearCounter });
+                    new SelectedCounterChangedEventArgs { selectedCounter = counter });
 
+    }
+
+    public Transform GetKitchenObjectFollowTransform()
+    {
+        return kitchenObjectHoldPosition;
+    }
+
+    public void SetKitchenObject(KitchenObject kitchenObject)
+    {
+        this.kitchenObject = kitchenObject;
+    }
+    public KitchenObject GetKitchenObject()
+    {
+        return kitchenObject;
+    }
+
+    public void ClearKitchenObject()
+    {
+        kitchenObject = null;
+    }
+    public bool HasKitchenObject()
+    {
+        return kitchenObject != null;
     }
 }
