@@ -6,13 +6,20 @@ using UnityEngine.UI;
 public class ProgressBarUI : MonoBehaviour
 {
     [SerializeField] private Image imageBar;
-    [SerializeField] private CuttingCounter cuttingCounter;
+    [SerializeField] private GameObject hasProgressGameObject;
+
+    private IHasProgress hasProgress;
 
 
     private void Start()
     {
 
-        cuttingCounter.OnProgressChanged += (sender, args) =>
+        hasProgress = hasProgressGameObject.GetComponent<IHasProgress>();
+        if (hasProgress == null)
+        {
+            Debug.LogError($"Game object {hasProgressGameObject.name} is not implement IHasProgress interface");
+        }
+        hasProgress.OnProgressChanged += (sender, args) =>
         {
             imageBar.fillAmount = args.progressNormalized;
             if (args.progressNormalized == 0f || args.progressNormalized == 1f)
