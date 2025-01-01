@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class ClearCounter : BaseCounter
 {
-
-
-
-
     public override void Interact(Player player)
     {
         if (HasKitchenObject())
@@ -22,11 +18,24 @@ public class ClearCounter : BaseCounter
             else
             {
                 //player is carrying kitchen object
-                if (player.GetKitchenObject() is PlateKitchenObject plateKitchenObject)
+                if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateGrabbedByPlayer))
                 {
-                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                    if (plateGrabbedByPlayer.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
                     {
                         GetKitchenObject().DestroySelf();
+                    }
+                }
+                else
+                {
+                    //player not carrying plate but something else
+                    if (GetKitchenObject().TryGetPlate(out PlateKitchenObject platePutOnCounter))
+                    {
+                        // kitchen object on counter is plate
+                        // put kitchen object player carrying to plate on counter
+                        if (platePutOnCounter.TryAddIngredient(player.GetKitchenObject().GetKitchenObjectSO()))
+                        {
+                            player.GetKitchenObject().DestroySelf();
+                        }
                     }
                 }
             }

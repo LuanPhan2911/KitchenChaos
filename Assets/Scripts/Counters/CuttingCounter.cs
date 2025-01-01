@@ -14,6 +14,7 @@ public class CuttingCounter : BaseCounter, IHasProgress
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
 
     public event EventHandler OnCut;
+    public static event EventHandler OnAnyCut;
 
     public override void Interact(Player player)
     {
@@ -25,6 +26,17 @@ public class CuttingCounter : BaseCounter, IHasProgress
                 //player not carrying kitchen object
                 //player grab kitchen object from counter
                 GetKitchenObject().SetKitchenObjectParent(player);
+            }
+            else
+            {
+                //player is carrying kitchen object
+                if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKitchenObject))
+                {
+                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
+                    {
+                        GetKitchenObject().DestroySelf();
+                    }
+                }
             }
         }
         else
@@ -64,6 +76,7 @@ public class CuttingCounter : BaseCounter, IHasProgress
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
 
             OnCut?.Invoke(this, EventArgs.Empty);
+            OnAnyCut?.Invoke(this, EventArgs.Empty);
             OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
             {
                 progressNormalized = (float)cuttingProgress / cuttingRecipeSO.maxCuttingProgress,

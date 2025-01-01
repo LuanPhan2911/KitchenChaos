@@ -1,14 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour, IKitchenObjectParent
 {
 
     public static Player Instance { get; private set; }
     [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private float rotationSpeed = 10;
+    [SerializeField] private float rotationSpeed = 10f;
 
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask counterLayer;
@@ -25,6 +27,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
     public event EventHandler<SelectedCounterChangedEventArgs> OnSelectedCounterChanged;
 
+    public event EventHandler OnPickupSomething;
 
 
 
@@ -171,11 +174,16 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     public void SetKitchenObject(KitchenObject kitchenObject)
     {
         this.kitchenObject = kitchenObject;
+        if (kitchenObject != null)
+        {
+            OnPickupSomething?.Invoke(this, EventArgs.Empty);
+        }
     }
     public KitchenObject GetKitchenObject()
     {
         return kitchenObject;
     }
+
 
     public void ClearKitchenObject()
     {
