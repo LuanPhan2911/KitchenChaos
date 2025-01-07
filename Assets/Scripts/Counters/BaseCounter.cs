@@ -11,6 +11,10 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     public static event EventHandler OnAnyObjectPlace;
     private KitchenObject kitchenObject;
 
+    public static void ResetStaticState()
+    {
+        OnAnyObjectPlace = null;
+    }
     public virtual void Interact(Player player)
     {
         // Debug.LogError("Interacting with BaseCounter");
@@ -19,6 +23,7 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     {
         // Debug.LogError("Interacting Alternate with BaseCounter");
     }
+
 
     public Transform GetKitchenObjectFollowTransform()
     {
