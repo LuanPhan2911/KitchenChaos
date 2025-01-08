@@ -8,6 +8,8 @@ public class StoveCounter : BaseCounter, IHasProgress
     [SerializeField] private FryingRecipeSO[] fryingRecipeSOArray;
     [SerializeField] private BurnedRecipeSO[] burnedRecipeSOArray;
 
+
+
     public event EventHandler<ChangeStateEventArgs> OnChangeState;
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
 
@@ -27,6 +29,7 @@ public class StoveCounter : BaseCounter, IHasProgress
     }
 
     private State state;
+
 
     private void Start()
     {
@@ -187,5 +190,9 @@ public class StoveCounter : BaseCounter, IHasProgress
         {
             progressNormalized = progressNormalized,
         });
+    }
+    public bool IsFried()
+    {
+        return state == State.Fried;
     }
 }

@@ -53,8 +53,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         {
             return;
         }
+
         if (selectedCounter != null)
         {
+
             selectedCounter.Interact(this);
         }
     }

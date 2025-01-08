@@ -15,10 +15,9 @@ public class GameManager : MonoBehaviour
 
     private State state;
 
-    private float waitingToStartTimer = 1f;
     private float countdownToStartTimer = 3f;
     private float gamePlayingTimer;
-    private float gamePlayingTimerMax = 10f;
+    private float gamePlayingTimerMax = 60f;
 
     public static GameManager Instance { get; private set; }
 
@@ -33,6 +32,7 @@ public class GameManager : MonoBehaviour
     {
         state = State.waitingToStart;
         Instance = this;
+
     }
 
     private void Start()
@@ -41,17 +41,19 @@ public class GameManager : MonoBehaviour
         {
             TogglePauseGame();
         };
+        GameInput.Instance.OnInteractAction += (sender, args) =>
+        {
+            if (state == State.waitingToStart)
+            {
+                SetState(State.countdownToStart);
+            }
+        };
     }
     private void Update()
     {
         switch (state)
         {
             case State.waitingToStart:
-                waitingToStartTimer -= Time.deltaTime;
-                if (waitingToStartTimer < 0f)
-                {
-                    SetState(State.countdownToStart);
-                }
                 break;
             case State.countdownToStart:
                 countdownToStartTimer -= Time.deltaTime;
