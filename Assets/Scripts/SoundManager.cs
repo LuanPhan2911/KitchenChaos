@@ -33,10 +33,10 @@ public class SoundManager : MonoBehaviour
             PlaySound(audioClipRefSO.chop, cuttingCounter.transform.position);
         };
 
-        Player.Instance.OnPickupSomething += (sender, args) =>
-        {
-            PlaySound(audioClipRefSO.objectPickUp, Player.Instance.transform.position);
-        };
+        // Player.Instance.OnPickupSomething += (sender, args) =>
+        // {
+        //     PlaySound(audioClipRefSO.objectPickUp, Player.Instance.transform.position);
+        // };
 
         BaseCounter.OnAnyObjectPlace += (sender, args) =>
         {

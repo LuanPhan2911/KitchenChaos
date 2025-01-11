@@ -1,14 +1,12 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class Player : MonoBehaviour, IKitchenObjectParent
+
+public class Player : NetworkBehaviour, IKitchenObjectParent
 {
 
-    public static Player Instance { get; private set; }
+    // public static Player Instance { get; private set; }
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 10f;
 
@@ -35,16 +33,16 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void Awake()
     {
-        if (Instance != null)
-        {
-            Debug.LogError("There is more than one player instance");
-        }
-        Instance = this;
+        // if (Instance != null)
+        // {
+        //     Debug.LogError("There is more than one player instance");
+        // }
+        // Instance = this;
     }
     private void Start()
     {
-        gameInput.OnInteractAction += GameInput_OnInteraction;
-        gameInput.OnInteractAlternateAction += GameInput_OnInteractionAlternate;
+        GameInput.Instance.OnInteractAction += GameInput_OnInteraction;
+        GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractionAlternate;
     }
 
     private void GameInput_OnInteraction(object sender, System.EventArgs e)
@@ -74,16 +72,22 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
         HandleMovement();
+
         HandleInteraction();
 
 
     }
 
 
+
     private void HandleMovement()
     {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector = GameInput.Instance.GetMovementVectorNormalized();
         Vector3 moveDir = new(inputVector.x, 0f, inputVector.y);
 
         float playerRadius = 0.7f;
@@ -134,7 +138,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     private void HandleInteraction()
     {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputVector = GameInput.Instance.GetMovementVectorNormalized();
         Vector3 moveDir = new(inputVector.x, 0f, inputVector.y);
         if (moveDir != Vector3.zero)
         {

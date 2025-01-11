@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI deliveredText;
+    [SerializeField] private Button playAgainButton;
     private void Start()
     {
-        Hide();
+
+
         GameManager.Instance.OnStateChanged += (sender, args) =>
         {
             if (GameManager.Instance.IsGameOver())
@@ -21,6 +24,12 @@ public class GameOverUI : MonoBehaviour
                 Hide();
             }
         };
+        playAgainButton.onClick.AddListener(() =>
+        {
+            GameManager.Instance.PlayAgainGame();
+        });
+
+        Hide();
     }
 
     private void Hide()
@@ -29,6 +38,8 @@ public class GameOverUI : MonoBehaviour
     }
     private void Show()
     {
+
         gameObject.SetActive(true);
+        playAgainButton.Select();
     }
 }

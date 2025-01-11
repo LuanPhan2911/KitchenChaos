@@ -15,9 +15,11 @@ public class GameManager : MonoBehaviour
 
     private State state;
 
-    private float countdownToStartTimer = 3f;
+
+    private float countdownToStartTimerMax = 3f;
+    private float countdownToStartTimer;
     private float gamePlayingTimer;
-    private float gamePlayingTimerMax = 60f;
+    private float gamePlayingTimerMax = 300f;
 
     public static GameManager Instance { get; private set; }
 
@@ -28,10 +30,17 @@ public class GameManager : MonoBehaviour
     public event EventHandler OnGamePaused;
     public event EventHandler OnGameUnpaused;
 
+    [SerializeField] private int targetFrameRate = 30;
+
     private void Awake()
     {
         state = State.waitingToStart;
+        countdownToStartTimer = countdownToStartTimerMax;
         Instance = this;
+
+        Application.targetFrameRate = targetFrameRate;
+
+
 
     }
 
@@ -43,17 +52,25 @@ public class GameManager : MonoBehaviour
         };
         GameInput.Instance.OnInteractAction += (sender, args) =>
         {
+
             if (state == State.waitingToStart)
             {
+
                 SetState(State.countdownToStart);
             }
         };
+
+
+        //automatically start game
+
+        SetState(State.countdownToStart);
     }
     private void Update()
     {
         switch (state)
         {
             case State.waitingToStart:
+
                 break;
             case State.countdownToStart:
                 countdownToStartTimer -= Time.deltaTime;
@@ -119,5 +136,11 @@ public class GameManager : MonoBehaviour
             OnGameUnpaused?.Invoke(this, EventArgs.Empty);
 
         }
+    }
+
+    public void PlayAgainGame()
+    {
+        countdownToStartTimer = countdownToStartTimerMax;
+        SetState(State.countdownToStart);
     }
 }

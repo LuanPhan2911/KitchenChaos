@@ -8,7 +8,7 @@ public class PlayerSound : MonoBehaviour
     private Player player;
 
     private float footstepTimer;
-    private float footstepTimerMax = 0.1f;
+    private float footstepTimerMax = 0.2f;
 
     private void Awake()
     {
@@ -22,9 +22,10 @@ public class PlayerSound : MonoBehaviour
             footstepTimer = footstepTimerMax;
             if (player.IsWalking())
             {
-
                 SoundManager.Instance.PlayFootstepSound(player.transform.position);
+
             }
+
         }
     }
 }
