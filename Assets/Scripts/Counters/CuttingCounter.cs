@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 public class CuttingCounter : BaseCounter, IHasProgress
@@ -20,12 +18,13 @@ public class CuttingCounter : BaseCounter, IHasProgress
     {
         OnAnyCut = null;
     }
+
     public override void Interact(Player player)
     {
         if (HasKitchenObject())
         {
             //counter has kitchen object
-            if (!player.HasKitchenObject() && !HasCuttingProgress())
+            if (!player.HasKitchenObject())
             {
                 //player not carrying kitchen object
                 //player grab kitchen object from counter
@@ -38,7 +37,8 @@ public class CuttingCounter : BaseCounter, IHasProgress
                 {
                     if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectSO()))
                     {
-                        GetKitchenObject().DestroySelf();
+                        KitchenObject.DestroyKitchenObject(GetKitchenObject());
+                        // GetKitchenObject().DestroySelf();
                     }
                 }
             }
@@ -52,16 +52,10 @@ public class CuttingCounter : BaseCounter, IHasProgress
                 //player put kitchen object on counter
                 if (HasOutputKitchenObjectSO(player.GetKitchenObject().GetKitchenObjectSO()))
                 {
+
                     player.GetKitchenObject().SetKitchenObjectParent(this);
+                    InteractPlaceObjectOnCounterServerRPC();
 
-                    cuttingProgress = 0;
-                    //counter have kitchen object and kitchen object can cut
-                    CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
-
-                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
-                    {
-                        progressNormalized = (float)cuttingProgress / cuttingRecipeSO.maxCuttingProgress,
-                    });
                     // kitchen object can cut
 
                 }
@@ -70,32 +64,66 @@ public class CuttingCounter : BaseCounter, IHasProgress
         }
 
     }
+
     public override void InteractAlternate(Player player)
     {
         if (HasKitchenObject() && HasOutputKitchenObjectSO(GetKitchenObject().GetKitchenObjectSO()))
         {
-            cuttingProgress++;
-            //counter have kitchen object and kitchen object can cut
-
-            CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
-
-            OnCut?.Invoke(this, EventArgs.Empty);
-            OnAnyCut?.Invoke(this, EventArgs.Empty);
-            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
-            {
-                progressNormalized = (float)cuttingProgress / cuttingRecipeSO.maxCuttingProgress,
-            });
-
-
-            if (cuttingProgress >= cuttingRecipeSO.maxCuttingProgress)
-            {
-
-                GetKitchenObject().DestroySelf();
-                KitchenObject.SpawnKitchenObject(cuttingRecipeSO.output, this);
-                cuttingProgress = 0;
-            }
+            CutObjectServerRPC();
+            TestCuttingProgressDoneServerRPC();
         }
 
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void InteractPlaceObjectOnCounterServerRPC()
+    {
+        InteractPlaceObjectOnCounterClientRPC();
+    }
+    [ClientRpc]
+    private void InteractPlaceObjectOnCounterClientRPC()
+    {
+        cuttingProgress = 0;
+        //counter have kitchen object and kitchen object can cut
+
+
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+        {
+            progressNormalized = 0f,
+        });
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void CutObjectServerRPC()
+    {
+        CutObjectClientRPC();
+    }
+    [ClientRpc]
+    private void CutObjectClientRPC()
+    {
+        cuttingProgress++;
+        //counter have kitchen object and kitchen object can cut
+
+        CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
+
+        OnCut?.Invoke(this, EventArgs.Empty);
+        OnAnyCut?.Invoke(this, EventArgs.Empty);
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs
+        {
+            progressNormalized = (float)cuttingProgress / cuttingRecipeSO.maxCuttingProgress,
+        });
+
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void TestCuttingProgressDoneServerRPC()
+    {
+        CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectSO());
+        if (cuttingProgress >= cuttingRecipeSO.maxCuttingProgress)
+        {
+
+            KitchenObject.DestroyKitchenObject(GetKitchenObject());
+            // GetKitchenObject().DestroySelf();
+            KitchenObject.SpawnKitchenObject(cuttingRecipeSO.output, this);
+            cuttingProgress = 0;
+        }
     }
 
 

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71a08f735771ec84996b8eeae63c0a50, type: 3}
-  m_Name: RecipeList
+  m_Name: _RecipeList
   m_EditorClassIdentifier: 
   recipeSOList:
   - {fileID: 11400000, guid: fd02035663a1d5e4abff2432eaecd625, type: 2}

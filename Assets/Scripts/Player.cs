@@ -7,6 +7,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 {
 
     // public static Player Instance { get; private set; }
+
+    public static Player LocalInstance { get; private set; }
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float rotationSpeed = 10f;
 
@@ -18,6 +20,8 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     [SerializeField] private Transform kitchenObjectHoldPosition;
     private KitchenObject kitchenObject;
 
+    public static event EventHandler OnAnyPlayerSpawn;
+
 
     public class SelectedCounterChangedEventArgs : EventArgs
     {
@@ -26,8 +30,13 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     public event EventHandler<SelectedCounterChangedEventArgs> OnSelectedCounterChanged;
 
     public event EventHandler OnPickupSomething;
+    public static event EventHandler OnAnyPlayerPickupSomething;
 
 
+    public static void ResetStaticState()
+    {
+        OnAnyPlayerSpawn = null;
+    }
 
     private bool isWalking;
 
@@ -43,6 +52,14 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         GameInput.Instance.OnInteractAction += GameInput_OnInteraction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractionAlternate;
+    }
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
+        {
+            LocalInstance = this;
+        }
+        OnAnyPlayerSpawn?.Invoke(this, EventArgs.Empty);
     }
 
     private void GameInput_OnInteraction(object sender, System.EventArgs e)
@@ -191,6 +208,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         if (kitchenObject != null)
         {
             OnPickupSomething?.Invoke(this, EventArgs.Empty);
+            OnAnyPlayerPickupSomething?.Invoke(this, EventArgs.Empty);
         }
     }
     public KitchenObject GetKitchenObject()
@@ -206,5 +224,10 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     public bool HasKitchenObject()
     {
         return kitchenObject != null;
+    }
+
+    public NetworkObject GetNetworkObject()
+    {
+        return NetworkObject;
     }
 }

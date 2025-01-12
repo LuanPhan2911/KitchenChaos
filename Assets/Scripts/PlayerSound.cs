@@ -16,16 +16,15 @@ public class PlayerSound : MonoBehaviour
     }
     private void Update()
     {
-        footstepTimer -= Time.deltaTime;
-        if (footstepTimer < 0f)
+        if (player.IsWalking())
         {
-            footstepTimer = footstepTimerMax;
-            if (player.IsWalking())
+            footstepTimer -= Time.deltaTime;
+            if (footstepTimer < 0f)
             {
+                footstepTimer = footstepTimerMax;
                 SoundManager.Instance.PlayFootstepSound(player.transform.position);
 
             }
-
         }
     }
 }

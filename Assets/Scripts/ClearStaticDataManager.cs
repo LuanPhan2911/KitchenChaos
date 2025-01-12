@@ -9,5 +9,6 @@ public class ClearStaticDataManager : MonoBehaviour
         CuttingCounter.ResetStaticState();
         TrashCounter.ResetStaticState();
         BaseCounter.ResetStaticState();
+        Player.ResetStaticState();
     }
 }
