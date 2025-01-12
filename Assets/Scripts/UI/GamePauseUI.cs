@@ -20,8 +20,8 @@ public class GamePauseUI : MonoBehaviour
     private void Start()
     {
 
-        GameManager.Instance.OnGamePaused += (sender, args) => Show();
-        GameManager.Instance.OnGameUnpaused += (sender, args) => Hide();
+        GameManager.Instance.OnLocalGamePaused += (sender, args) => Show();
+        GameManager.Instance.OnLocalGameUnpaused += (sender, args) => Hide();
 
         mainMenuButton.onClick.AddListener(() =>
         {

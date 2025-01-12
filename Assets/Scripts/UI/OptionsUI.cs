@@ -60,7 +60,7 @@ public class OptionsUI : MonoBehaviour
             GamePauseUI.Instance.Show();
             Hide();
         });
-        GameManager.Instance.OnGamePaused += (sender, args) => Hide();
+        GameManager.Instance.OnLocalGamePaused += (sender, args) => Hide();
 
         UpdateVisual();
         Hide();
