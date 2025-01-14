@@ -20,6 +20,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     private BaseCounter selectedCounter;
     [SerializeField] private Transform kitchenObjectHoldPosition;
     [SerializeField] private Vector3[] spawnPositions;
+    [SerializeField] private PlayerVisual playerVisual;
     private KitchenObject kitchenObject;
 
     public static event EventHandler OnAnyPlayerSpawn;
@@ -54,6 +55,9 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     {
         GameInput.Instance.OnInteractAction += GameInput_OnInteraction;
         GameInput.Instance.OnInteractAlternateAction += GameInput_OnInteractionAlternate;
+
+        PlayerData playerData = KitchenGameMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+        playerVisual.SetPlayerColor(KitchenGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
     }
     public override void OnNetworkSpawn()
     {
@@ -61,8 +65,22 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         {
             LocalInstance = this;
         }
-        transform.position = spawnPositions[(int)OwnerClientId];
+        transform.position = spawnPositions[
+            KitchenGameMultiplayer.Instance.GetPlayerDataIndexFromClientId(OwnerClientId)
+        ];
         OnAnyPlayerSpawn?.Invoke(this, EventArgs.Empty);
+
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += (clientId) =>
+           {
+               // destroy kitchen object when player holder object and disconnect
+               if (clientId == OwnerClientId && HasKitchenObject())
+               {
+                   KitchenObject.DestroyKitchenObject(GetKitchenObject());
+               }
+           };
+        }
     }
 
     private void GameInput_OnInteraction(object sender, System.EventArgs e)

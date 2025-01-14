@@ -91,10 +91,11 @@ MonoBehaviour:
     m_Bits: 192
   kitchenObjectHoldPosition: {fileID: 8709025607862803236}
   spawnPositions:
-  - {x: 2, y: 0, z: 0}
-  - {x: -2, y: 0, z: 0}
-  - {x: 2, y: 0, z: 2}
-  - {x: 2, y: 0, z: -2}
+  - {x: -2, y: 0, z: -2}
+  - {x: -2, y: 0, z: 1}
+  - {x: 4, y: 0, z: -2}
+  - {x: 4, y: 0, z: 1}
+  playerVisual: {fileID: 1460165911423465654}
 --- !u!114 &8862311703233783605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -326,6 +327,18 @@ Animator:
     type: 3}
   m_PrefabInstance: {fileID: 6640872501753501137}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1460165911423465654 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5218145244656889191, guid: 1c5dda3c7cd3cf742afcade5419faeab,
+    type: 3}
+  m_PrefabInstance: {fileID: 6640872501753501137}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8183123498856905206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c356c1a35f564b542afb8a0a97290468, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8183123498856905205 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3294758251327466532, guid: 1c5dda3c7cd3cf742afcade5419faeab,

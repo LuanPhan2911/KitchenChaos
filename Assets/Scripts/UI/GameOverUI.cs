@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,8 @@ public class GameOverUI : MonoBehaviour
         };
         playAgainButton.onClick.AddListener(() =>
         {
-            GameManager.Instance.PlayAgainGame();
+            NetworkManager.Singleton.Shutdown();
+            SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
         });
 
         Hide();

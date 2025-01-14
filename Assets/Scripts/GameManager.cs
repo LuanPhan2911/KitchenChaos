@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class GameManager : NetworkBehaviour
 {
+
+    [SerializeField] private Transform playerPrefab;
+
     public enum State
     {
         waitingToStart,
@@ -42,6 +45,8 @@ public class GameManager : NetworkBehaviour
 
     private NetworkVariable<bool> isGamePaused = new NetworkVariable<bool>(false);
 
+    private bool autoTestPaused = false;
+
 
     [SerializeField] private int targetFrameRate = 30;
 
@@ -75,6 +80,24 @@ public class GameManager : NetworkBehaviour
                 OnGameUnpaused?.Invoke(this, EventArgs.Empty);
             }
         };
+        if (IsServer)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback += (clientId) =>
+           {
+               autoTestPaused = true;
+           };
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+
+        }
+    }
+    private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, System.Collections.Generic.List<ulong> clientsCompleted, System.Collections.Generic.List<ulong> clientsTimedOut)
+    {
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
+        {
+            Transform playerTransform = Instantiate(playerPrefab);
+            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+
+        }
     }
     private void Start()
     {
@@ -146,6 +169,14 @@ public class GameManager : NetworkBehaviour
         }
 
 
+    }
+    private void LateUpdate()
+    {
+        if (autoTestPaused)
+        {
+            autoTestPaused = false;
+            TestPlayerPausedGame();
+        }
     }
 
     public bool IsGamePlaying()
@@ -230,9 +261,5 @@ public class GameManager : NetworkBehaviour
         isGamePaused.Value = false;
     }
 
-    public void PlayAgainGame()
-    {
-        countdownToStartTimer.Value = 3f;
-        SetState(State.countdownToStart);
-    }
+
 }

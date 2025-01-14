@@ -97,7 +97,7 @@ public class StoveCounter : BaseCounter, IHasProgress
                         burningTimer.Value = 0f;
                         SetState(State.Fried);
                         SetBurningRecipeClientRPC(
-                            KitchenObjectsMultiplayer.Instance.GetKitchenObjectSOIndex(GetKitchenObject().GetKitchenObjectSO())
+                            KitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(GetKitchenObject().GetKitchenObjectSO())
                         );
 
 
@@ -164,7 +164,7 @@ public class StoveCounter : BaseCounter, IHasProgress
                     kitchenObject.SetKitchenObjectParent(this);
 
                     InteractPlaceObjectOnCounterServerRPC(
-                        KitchenObjectsMultiplayer.Instance.GetKitchenObjectSOIndex(kitchenObject.GetKitchenObjectSO()));
+                        KitchenGameMultiplayer.Instance.GetKitchenObjectSOIndex(kitchenObject.GetKitchenObjectSO()));
 
                 }
 
@@ -182,13 +182,13 @@ public class StoveCounter : BaseCounter, IHasProgress
     [ClientRpc]
     private void SetFryingRecipeClientRPC(int kitchenObjectSOIndex)
     {
-        KitchenObjectSO kitchenObjectSO = KitchenObjectsMultiplayer.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
+        KitchenObjectSO kitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
         fryingRecipeSO = GetFryingRecipeSOWithInput(kitchenObjectSO);
     }
     [ClientRpc]
     private void SetBurningRecipeClientRPC(int kitchenObjectSOIndex)
     {
-        KitchenObjectSO kitchenObjectSO = KitchenObjectsMultiplayer.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
+        KitchenObjectSO kitchenObjectSO = KitchenGameMultiplayer.Instance.GetKitchenObjectSoFromIndex(kitchenObjectSOIndex);
         burnedRecipeSO = GetBurnedRecipeSOWithInput(kitchenObjectSO);
     }
     [ServerRpc(RequireOwnership = false)]
