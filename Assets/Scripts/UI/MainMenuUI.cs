@@ -6,14 +6,21 @@ using UnityEngine.UI;
 
 public class MainMenuUI : MonoBehaviour
 {
-    [SerializeField] private Button playButton;
+    [SerializeField] private Button multiplayerButton;
+    [SerializeField] private Button singlePlayerButton;
     [SerializeField] private Button quitButton;
 
 
     private void Awake()
     {
-        playButton.onClick.AddListener(() =>
+        multiplayerButton.onClick.AddListener(() =>
         {
+            KitchenGameMultiplayer.isMultiplayer = true;
+            SceneLoader.Load(SceneLoader.Scene.LobbyScene);
+        });
+        singlePlayerButton.onClick.AddListener(() =>
+        {
+            KitchenGameMultiplayer.isMultiplayer = false;
             SceneLoader.Load(SceneLoader.Scene.LobbyScene);
         });
 
@@ -23,6 +30,6 @@ public class MainMenuUI : MonoBehaviour
         });
 
         Time.timeScale = 1f;
-        playButton.Select();
+        multiplayerButton.Select();
     }
 }

@@ -14,7 +14,7 @@ public class HostDisconnectedUI : MonoBehaviour
 
         playAgainButton.onClick.AddListener(() =>
        {
-           NetworkManager.Singleton.Shutdown();
+
            SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
        });
         Hide();
@@ -36,8 +36,5 @@ public class HostDisconnectedUI : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void OnDestroy()
-    {
-        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnClientDisconnect;
-    }
+
 }
