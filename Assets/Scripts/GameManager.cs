@@ -48,18 +48,11 @@ public class GameManager : NetworkBehaviour
     private bool autoTestPaused = false;
 
 
-    [SerializeField] private int targetFrameRate = 30;
+
 
     private void Awake()
     {
-
-
         Instance = this;
-
-        Application.targetFrameRate = targetFrameRate;
-
-
-
     }
     public override void OnNetworkSpawn()
     {

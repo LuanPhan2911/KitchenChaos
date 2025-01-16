@@ -10,7 +10,7 @@ public class HostDisconnectedUI : MonoBehaviour
     [SerializeField] private Button playAgainButton;
     private void Start()
     {
-        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnCLientDisconnect;
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnect;
 
         playAgainButton.onClick.AddListener(() =>
        {
@@ -19,7 +19,7 @@ public class HostDisconnectedUI : MonoBehaviour
        });
         Hide();
     }
-    private void NetworkManager_OnCLientDisconnect(ulong clientId)
+    private void NetworkManager_OnClientDisconnect(ulong clientId)
     {
         if (clientId == NetworkManager.ServerClientId)
         {
@@ -38,6 +38,6 @@ public class HostDisconnectedUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnCLientDisconnect;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnClientDisconnect;
     }
 }
