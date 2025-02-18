@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameMultiplayerPauseUI : MonoBehaviour
@@ -11,7 +9,10 @@ public class GameMultiplayerPauseUI : MonoBehaviour
 
         GameManager.Instance.OnGamePaused += (sender, args) =>
         {
-            Show();
+            if (KitchenGameMultiplayer.isMultiplayer)
+            {
+                Show();
+            }
         };
         GameManager.Instance.OnGameUnpaused += (sender, args) =>
         {

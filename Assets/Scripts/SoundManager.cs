@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundManager : MonoBehaviour
@@ -77,11 +75,16 @@ public class SoundManager : MonoBehaviour
     }
     public void UpdateSoundEffectVolume()
     {
-        volume += 0.1f;
-        if (volume > 1f)
+
+        if (volume >= 1f)
         {
             volume = 0f;
         }
+        else
+        {
+            volume += 0.1f;
+        }
+
         PlayerPrefs.SetFloat(PLAYER_PREFS_SOUND_EFFECT_VOLUME, volume);
         PlayerPrefs.Save();
     }

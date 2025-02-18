@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class WaitingPlayerReadyUI : MonoBehaviour
@@ -12,6 +10,7 @@ public class WaitingPlayerReadyUI : MonoBehaviour
         {
             if (GameManager.Instance.IsLocalPlayerReady())
             {
+
                 Show();
             }
         };
