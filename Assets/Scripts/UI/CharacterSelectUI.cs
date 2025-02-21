@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
@@ -33,18 +31,8 @@ public class CharacterSelectUI : MonoBehaviour
     {
         Lobby lobby = KitchenGameLobby.Instance.GetLobby();
 
-        lobbyNameText.text = $"Lobby Name: {lobby.Name}";
-        lobbyCodeText.text = $"Lobby Code: {lobby.LobbyCode}";
+        lobbyNameText.text = $"Name: {lobby.Name}";
+        lobbyCodeText.text = $"Code: {lobby.LobbyCode}";
     }
 
-
-    private void Show()
-    {
-        gameObject.SetActive(true);
-    }
-
-    private void Hide()
-    {
-        gameObject.SetActive(false);
-    }
 }

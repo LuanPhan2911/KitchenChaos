@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
@@ -64,6 +63,7 @@ public class DeliveryManager : NetworkBehaviour
             List<KitchenObjectSO> differenceRecipeList = waitingRecipeSO.kitchenObjectSOList.Except(plateKitchenObject.GetKitchenObjectSOList()).ToList();
             if (differenceRecipeList.Count == 0)
             {
+
                 DeliverCorrectRecipeServerRPC(i);
                 return;
             }
@@ -74,6 +74,7 @@ public class DeliveryManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void DeliverCorrectRecipeServerRPC(int recipeIndex)
     {
+        GameManager.Instance.AddGamePlayingTimer(5f);
         DeliverCorrectRecipeClientRPC(recipeIndex);
     }
     [ClientRpc]

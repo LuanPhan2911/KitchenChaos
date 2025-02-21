@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -157,6 +156,9 @@ public class GameManager : NetworkBehaviour
                 }
                 break;
             case State.gameOver:
+                GameData.Instance.SetMaxRecipeCompleted(
+                    DeliveryManager.Instance.GetDeliveredSuccess()
+                    );
                 break;
 
         }
@@ -170,6 +172,10 @@ public class GameManager : NetworkBehaviour
             autoTestPaused = false;
             TestPlayerPausedGame();
         }
+    }
+    public void AddGamePlayingTimer(float second)
+    {
+        gamePlayingTimer.Value += second;
     }
 
     public bool IsGamePlaying()
@@ -197,6 +203,10 @@ public class GameManager : NetworkBehaviour
     public float GetCountdownTimer()
     {
         return countdownToStartTimer.Value;
+    }
+    public float GetGamePlayingTimer()
+    {
+        return gamePlayingTimer.Value;
     }
     public bool IsGameOver()
     {

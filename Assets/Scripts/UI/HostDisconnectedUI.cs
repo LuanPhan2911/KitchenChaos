@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,13 +12,13 @@ public class HostDisconnectedUI : MonoBehaviour
 
         playAgainButton.onClick.AddListener(() =>
        {
-
            SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
        });
         Hide();
     }
     private void NetworkManager_OnClientDisconnect(ulong clientId)
     {
+
         if (clientId == NetworkManager.ServerClientId)
         {
             Show();
@@ -35,6 +33,11 @@ public class HostDisconnectedUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    private void OnDestroy()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback -= NetworkManager_OnClientDisconnect;
+    }
+
 
 
 }

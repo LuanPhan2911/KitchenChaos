@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -12,7 +11,6 @@ using Unity.Services.Lobbies.Models;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class KitchenGameLobby : MonoBehaviour
@@ -25,6 +23,7 @@ public class KitchenGameLobby : MonoBehaviour
     public event EventHandler OnJoinStarted;
     public event EventHandler OnQuickJoinFailed;
     public event EventHandler OnJoinFailed;
+    public event EventHandler OnHideLobbyMessage;
     public event EventHandler<OnLobbyListChangeEventArgs> OnLobbyListChange;
     public class OnLobbyListChangeEventArgs : EventArgs
     {
@@ -93,7 +92,7 @@ public class KitchenGameLobby : MonoBehaviour
             QueryLobbiesOptions queryLobbiesOptions = new QueryLobbiesOptions
             {
                 Filters = new List<QueryFilter>{
-                    new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT)
+                    new QueryFilter(QueryFilter.FieldOptions.AvailableSlots, "0", QueryFilter.OpOptions.GT),
 
                 }
             };
@@ -112,7 +111,7 @@ public class KitchenGameLobby : MonoBehaviour
             Debug.Log(e);
         }
     }
-    private bool IsLobbyHost()
+    public bool IsLobbyHost()
     {
         return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
@@ -122,7 +121,7 @@ public class KitchenGameLobby : MonoBehaviour
         if (UnityServices.State != ServicesInitializationState.Initialized)
         {
             InitializationOptions initializationOptions = new InitializationOptions();
-            // initializationOptions.SetProfile(UnityEngine.Random.Range(0, 1000).ToString());
+            initializationOptions.SetProfile(UnityEngine.Random.Range(0, 1000).ToString());
             await UnityServices.InitializeAsync(initializationOptions);
 
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
@@ -174,10 +173,13 @@ public class KitchenGameLobby : MonoBehaviour
         OnCreateLobbyStarted?.Invoke(this, EventArgs.Empty);
         try
         {
-            joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, KitchenGameMultiplayer.MAX_PLAYER_IN_GAME,
+            joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName,
+                KitchenGameMultiplayer.MAX_PLAYER_IN_GAME,
               new CreateLobbyOptions
               {
-                  IsPrivate = isPrivate
+                  IsPrivate = isPrivate,
+
+
               });
             Allocation allocation = await AllocateRelay();
             string relayJoinCode = await GetRelayJoinCode(allocation);
@@ -194,6 +196,8 @@ public class KitchenGameLobby : MonoBehaviour
                 new RelayServerData(allocation, "dtls")
             );
             KitchenGameMultiplayer.Instance.StartHost();
+            OnHideLobbyMessage?.Invoke(this, EventArgs.Empty);
+
             SceneLoader.LoadNetwork(SceneLoader.Scene.CharacterSelectScene);
         }
         catch (LobbyServiceException e)
@@ -214,11 +218,14 @@ public class KitchenGameLobby : MonoBehaviour
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(
                new RelayServerData(joinAllocation, "dtls")
            );
+
+            OnHideLobbyMessage?.Invoke(this, EventArgs.Empty);
             KitchenGameMultiplayer.Instance.StartClient();
 
         }
         catch (LobbyServiceException e)
         {
+
             OnQuickJoinFailed?.Invoke(this, EventArgs.Empty);
             Debug.Log(e);
 
@@ -235,6 +242,8 @@ public class KitchenGameLobby : MonoBehaviour
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(
                new RelayServerData(joinAllocation, "dtls")
            );
+
+            OnHideLobbyMessage?.Invoke(this, EventArgs.Empty);
             KitchenGameMultiplayer.Instance.StartClient();
 
         }
@@ -256,6 +265,7 @@ public class KitchenGameLobby : MonoBehaviour
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(
                new RelayServerData(joinAllocation, "dtls")
            );
+            OnHideLobbyMessage?.Invoke(this, EventArgs.Empty);
             KitchenGameMultiplayer.Instance.StartClient();
 
         }

@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
@@ -28,13 +26,17 @@ public class CharacterSelectPlayer : MonoBehaviour
 
     private void Start()
     {
+
         KitchenGameMultiplayer.Instance.OnPlayerDataNetworkListChange += KitchenGameMultiplayer_OnPlayerDataNetworkListChange;
 
         CharacterSelectReady.Instance.OnReadyChanged += (sender, args) =>
         {
             UpdatePlayer();
         };
-        kickButton.gameObject.SetActive(NetworkManager.Singleton.IsServer);
+
+
+
+
         UpdatePlayer();
     }
     private void KitchenGameMultiplayer_OnPlayerDataNetworkListChange(object sender, EventArgs eventArgs)
@@ -53,6 +55,12 @@ public class CharacterSelectPlayer : MonoBehaviour
             playerNameText.text = playerData.playerName.ToString();
 
             playerVisual.SetPlayerColor(KitchenGameMultiplayer.Instance.GetPlayerColor(playerData.colorId));
+
+            ulong clientId = playerData.clientId;
+            ulong serverClientId = NetworkManager.ServerClientId;
+
+
+            kickButton.gameObject.SetActive(clientId != serverClientId && NetworkManager.Singleton.IsServer);
         }
         else
         {

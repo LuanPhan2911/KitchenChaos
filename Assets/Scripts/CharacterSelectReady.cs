@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine;
 
 public class CharacterSelectReady : NetworkBehaviour
 {
@@ -16,7 +14,18 @@ public class CharacterSelectReady : NetworkBehaviour
     {
         Instance = this;
     }
+    private void Start()
+    {
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback; ;
+    }
 
+    private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
+    {
+        if (clientId == NetworkManager.ServerClientId)
+        {
+            KitchenGameLobby.Instance.LeaveLobby();
+        }
+    }
 
     public void SetPlayerReady()
     {

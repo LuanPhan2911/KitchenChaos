@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -10,11 +8,14 @@ public class LobbyListSingleUI : MonoBehaviour
 
     private Lobby Lobby;
     [SerializeField] private TextMeshProUGUI lobbyNameText;
+    [SerializeField] private TextMeshProUGUI lobbyPlayerCountText;
+    [SerializeField] private Button joinButton;
+
 
 
     private void Awake()
     {
-        GetComponent<Button>().onClick.AddListener(() =>
+        joinButton.onClick.AddListener(() =>
         {
             KitchenGameLobby.Instance.JoinWithId(Lobby.Id);
         });
@@ -24,5 +25,7 @@ public class LobbyListSingleUI : MonoBehaviour
     {
         this.Lobby = lobby;
         lobbyNameText.text = lobby.Name;
+
+        lobbyPlayerCountText.text = $"Player {lobby.Players.Count}/{lobby.MaxPlayers}";
     }
 }

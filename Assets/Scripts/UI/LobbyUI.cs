@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Services.Lobbies.Models;
@@ -24,7 +23,9 @@ public class LobbyUI : MonoBehaviour
     {
         mainMenuButton.onClick.AddListener(() =>
         {
+
             KitchenGameLobby.Instance.LeaveLobby();
+
             SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
         });
         createLobbyButton.onClick.AddListener(() =>
