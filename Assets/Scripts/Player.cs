@@ -1,5 +1,5 @@
+using Cinemachine;
 using System;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,7 +12,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
     public static Player LocalInstance { get; private set; }
 
 
-    [SerializeField] private GameInput gameInput;
+
     [SerializeField] private LayerMask counterLayer;
     [SerializeField] private LayerMask collisionsLayer;
 
@@ -45,11 +45,7 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
 
     private void Awake()
     {
-        // if (Instance != null)
-        // {
-        //     Debug.LogError("There is more than one player instance");
-        // }
-        // Instance = this;
+
     }
     private void Start()
     {
@@ -64,6 +60,19 @@ public class Player : NetworkBehaviour, IKitchenObjectParent
         if (IsOwner)
         {
             LocalInstance = this;
+            // set camera follow player
+            // Find the Cinemachine Virtual Camera
+            CinemachineVirtualCamera vCam = FindObjectOfType<CinemachineVirtualCamera>();
+
+            if (vCam != null)
+            {
+                // Set the Follow and LookAt targets to this player
+                vCam.Follow = transform;
+
+            }
+
+
+
         }
         transform.position = spawnPositions[
             KitchenGameMultiplayer.Instance.GetPlayerDataIndexFromClientId(OwnerClientId)

@@ -22,7 +22,7 @@ public class GameManager : NetworkBehaviour
 
     private NetworkVariable<float> countdownToStartTimer = new NetworkVariable<float>(3f);
     private NetworkVariable<float> gamePlayingTimer = new NetworkVariable<float>(0f);
-    private float gamePlayingTimerMax = 90f;
+    private float gamePlayingTimerMax = 300f;
 
     public static GameManager Instance { get; private set; }
 
