@@ -62,6 +62,7 @@ public class DeliveryManager : NetworkBehaviour
     public void SpawnNewWaitingRecipeServerRPC(int recipeSOIndex)
     {
         SpawnNewWaitingRecipeClientRPC(recipeSOIndex);
+
     }
     [ClientRpc]
     private void SpawnNewWaitingRecipeClientRPC(int waitingRecipeSOIndex)
@@ -131,6 +132,10 @@ public class DeliveryManager : NetworkBehaviour
     public RecipeSO GetRandomRecipeSO(out int recipeSOIndex)
     {
         recipeSOIndex = UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count);
+        return recipeListSO.recipeSOList[recipeSOIndex];
+    }
+    public RecipeSO GetRecipeSO(int recipeSOIndex)
+    {
         return recipeListSO.recipeSOList[recipeSOIndex];
     }
 

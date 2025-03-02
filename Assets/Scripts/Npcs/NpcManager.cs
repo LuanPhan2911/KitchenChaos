@@ -8,7 +8,7 @@ public class NpcManager : MonoBehaviour
     [SerializeField] public NpcOrderRecipe npcOrderRecipe;
     public RecipeSO recipeSO;
     public int recipeSOIndex;
-
+    public SpawnNpcWaitingPosition spawnNpcWaitingPosition;
     public const float minDistance = 0.5f;
 
     public class OnSpawnRecipeEventArgs : EventArgs
@@ -30,7 +30,7 @@ public class NpcManager : MonoBehaviour
 
     private void NpcMovement_OnReachTargetPosition(object sender, System.EventArgs e)
     {
-        if (Vector3.Distance(transform.position, SpawnNpcManager.Instance.GetWaitingPosition()) <= minDistance)
+        if (Vector3.Distance(transform.position, spawnNpcWaitingPosition.GetWaitingPosition()) <= minDistance)
         {
             // handle order here
             OnSpawnRecipe?.Invoke(this, new OnSpawnRecipeEventArgs
@@ -45,9 +45,10 @@ public class NpcManager : MonoBehaviour
             // receive order and move to spawn position
             //npcMovement.SetTargetPosition(SpawnNpcManager.Instance.GetSpawnPosition());
         }
-        else if (Vector3.Distance(transform.position, SpawnNpcManager.Instance.GetSpawnPosition()) <= minDistance)
+        else if (Vector3.Distance(transform.position, spawnNpcWaitingPosition.GetSpawnPosition()) <= minDistance)
         {
             // destroy npc
+
             SpawnNpcManager.Instance.RemoveNpcManager(this);
             Destroy(gameObject);
         }
